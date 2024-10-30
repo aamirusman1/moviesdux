@@ -1,19 +1,12 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../styles.css";
 import MovieCard from "./MovieCard";
 
-export default function MovieGrid() {
-  const [movies, setMovies] = useState([]);
+export default function MovieGrid({ movies, watchlist, toggleWatchlist }) {
   const [searchTerm, setSearchTerm] = useState("");
+
   const [genre, setGenre] = useState("All Genres");
   const [rating, setRating] = useState("All");
-
-  useEffect(() => {
-    fetch("movies.json")
-      .then((response) => response.json())
-      .then((data) => setMovies(data));
-  }, []);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -57,10 +50,6 @@ export default function MovieGrid() {
     }
   };
 
-  //   const filteredMovies = movies.filter((movie) =>
-  //     movie.title.toLowerCase().includes(searchTerm.toLowerCase())
-  //   );
-
   const filteredMovies = movies.filter(
     (movie) =>
       matchesGenre(movie, genre) &&
@@ -73,12 +62,11 @@ export default function MovieGrid() {
       <input
         type="text"
         className="search-input"
-        placeholder="Search movie..."
+        placeholder="Search movies..."
         value={searchTerm}
         onChange={handleSearchChange}
       />
 
-      {/* filter for genre and rating start */}
       <div className="filter-bar">
         <div className="filter-slot">
           <label>Genre</label>
@@ -109,11 +97,15 @@ export default function MovieGrid() {
           </select>
         </div>
       </div>
-      {/* filter for genre and rating end */}
 
       <div className="movies-grid">
         {filteredMovies.map((movie) => (
-          <MovieCard movie={movie} key={movie.id}></MovieCard>
+          <MovieCard
+            movie={movie}
+            key={movie.id}
+            toggleWatchlist={toggleWatchlist}
+            isWatchlisted={watchlist.includes(movie.id)}
+          ></MovieCard>
         ))}
       </div>
     </div>
